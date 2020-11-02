@@ -1,0 +1,45 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'moonshot'",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=moonshot",
+          "--package=moonshot"
+        ],
+        "filter": {
+          "name": "moonshot",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'moonshot'",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=moonshot",
+          "--package=moonshot"
+        ],
+        "filter": {
+          "name": "moonshot",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
