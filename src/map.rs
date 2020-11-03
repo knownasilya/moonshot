@@ -91,7 +91,7 @@ pub fn draw_map(map: &[TileType], ctx: &mut Rltk) {
           // RGB::from_f32(0., 0., 0.),
           // RGB::named(rltk::GREEN),
           RGB::named(rltk::WHITE),
-          rltk::to_cp437('7'),
+          rltk::to_cp437('#'),
         );
       }
       TileType::Tree => {

@@ -73,7 +73,10 @@ impl GameState for State {
 
 fn main() -> rltk::BError {
     use rltk::RltkBuilder;
-    let context = RltkBuilder::simple80x50().with_title("moonshot").build()?;
+    let context = RltkBuilder::simple80x50()
+        .with_title("moonshot")
+        .with_font("terminal8x8_palette2.png", 8, 8)
+        .build()?;
     let mut gs = State { ecs: World::new() };
     gs.ecs.register::<Position>();
     gs.ecs.register::<Renderable>();
