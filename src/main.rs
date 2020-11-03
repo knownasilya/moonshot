@@ -4,7 +4,7 @@ use specs_derive::Component;
 use std::cmp::{max, min};
 
 mod map;
-pub use map::{draw_map, new_map_test, xy_idx, TileType};
+pub use map::{draw_map, new_map_start, new_map_test, xy_idx, TileType};
 
 #[derive(Component, Debug)]
 struct Player {}
@@ -80,7 +80,8 @@ fn main() -> rltk::BError {
     gs.ecs.register::<LeftMover>();
     gs.ecs.register::<Player>();
 
-    gs.ecs.insert(new_map_test());
+    // gs.ecs.insert(new_map_test());
+    gs.ecs.insert(new_map_start());
 
     gs.ecs
         .create_entity()
@@ -93,7 +94,7 @@ fn main() -> rltk::BError {
         .with(Player {})
         .build();
 
-    for i in 0..10 {
+    for i in 1..10 {
         gs.ecs
             .create_entity()
             .with(Position { x: i * 7, y: 20 })
@@ -116,7 +117,8 @@ fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
 
     for (_player, pos) in (&mut players, &mut positions).join() {
         let destination_idx = xy_idx(pos.x + delta_x, pos.y + delta_y);
-        if map[destination_idx] != TileType::Wall {
+
+        if !map[destination_idx].is_blocked() {
             pos.x = min(79, max(0, pos.x + delta_x));
             pos.y = min(49, max(0, pos.y + delta_y));
         }
