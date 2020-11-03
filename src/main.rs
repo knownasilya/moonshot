@@ -90,8 +90,8 @@ fn main() -> rltk::BError {
         .with(Position { x: 5, y: 5 })
         .with(Renderable {
             glyph: rltk::to_cp437('@'),
-            fg: RGB::named(rltk::YELLOW),
-            bg: RGB::named(rltk::BLACK),
+            fg: RGB::named(rltk::BLUE),
+            bg: RGB::named(rltk::WHITE),
         })
         .with(Player {})
         .build();
@@ -103,7 +103,7 @@ fn main() -> rltk::BError {
             .with(Renderable {
                 glyph: rltk::to_cp437('☺'),
                 fg: RGB::named(rltk::RED),
-                bg: RGB::named(rltk::BLACK),
+                bg: RGB::named(rltk::WHITE),
             })
             // .with(LeftMover {})
             .build();
@@ -179,8 +179,10 @@ fn draw_map(map: &[TileType], ctx: &mut Rltk) {
                 ctx.set(
                     x,
                     y,
-                    RGB::from_f32(0.5, 0.5, 0.5),
-                    RGB::from_f32(0., 0., 0.),
+                    // RGB::from_f32(0.5, 0.5, 0.5),
+                    // RGB::from_f32(0., 0., 0.),
+                    RGB::named(rltk::GREEN),
+                    RGB::named(rltk::WHITE),
                     rltk::to_cp437('.'),
                 );
             }
@@ -188,8 +190,10 @@ fn draw_map(map: &[TileType], ctx: &mut Rltk) {
                 ctx.set(
                     x,
                     y,
-                    RGB::from_f32(0.0, 1.0, 0.0),
-                    RGB::from_f32(0., 0., 0.),
+                    // RGB::from_f32(0.0, 1.0, 0.0),
+                    // RGB::from_f32(0., 0., 0.),
+                    RGB::named(rltk::GREEN),
+                    RGB::named(rltk::WHITE),
                     rltk::to_cp437('#'),
                 );
             }
