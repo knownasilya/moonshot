@@ -4,7 +4,7 @@ use specs_derive::Component;
 use std::cmp::{max, min};
 
 mod map;
-pub use map::{draw_map, new_map_start, new_map_test, xy_idx, TileType};
+pub use map::{Map, TileType};
 
 #[derive(Component, Debug)]
 struct Player {}
@@ -59,8 +59,8 @@ impl GameState for State {
         player_input(self, ctx);
         self.run_systems();
 
-        let map = self.ecs.fetch::<Vec<TileType>>();
-        draw_map(&map, ctx);
+        let map = self.ecs.fetch::<Map>();
+        map.draw_map(ctx);
 
         let positions = self.ecs.read_storage::<Position>();
         let renderables = self.ecs.read_storage::<Renderable>();
@@ -84,7 +84,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Player>();
 
     // gs.ecs.insert(new_map_test());
-    gs.ecs.insert(new_map_start());
+    gs.ecs.insert(Map::new_map_start());
 
     gs.ecs
         .create_entity()
@@ -116,12 +116,12 @@ fn main() -> rltk::BError {
 fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
     let mut positions = ecs.write_storage::<Position>();
     let mut players = ecs.write_storage::<Player>();
-    let map = ecs.fetch::<Vec<TileType>>();
+    let map = ecs.fetch::<Map>();
 
     for (_player, pos) in (&mut players, &mut positions).join() {
-        let destination_idx = xy_idx(pos.x + delta_x, pos.y + delta_y);
+        let destination_idx = Map::xy_idx(map.width, pos.x + delta_x, pos.y + delta_y);
 
-        if !map[destination_idx].is_blocked() {
+        if !map.tiles[destination_idx].is_blocked() {
             pos.x = min(79, max(0, pos.x + delta_x));
             pos.y = min(49, max(0, pos.y + delta_y));
         }
