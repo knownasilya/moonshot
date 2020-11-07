@@ -25,6 +25,17 @@ impl TileType {
       _ => TileType::Empty,
     }
   }
+
+  pub fn is_blocked(&self) -> bool {
+    match &self {
+      TileType::Tree => true,
+      TileType::WallV => true,
+      TileType::WallH => true,
+      TileType::Mountain => true,
+      TileType::Floor => false,
+      TileType::Empty => false,
+    }
+  }
 }
 
 #[derive(Default)]
