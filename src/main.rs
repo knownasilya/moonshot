@@ -52,18 +52,28 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Position>();
     gs.ecs.register::<Renderable>();
     gs.ecs.register::<Player>();
+    gs.ecs.register::<Moonshot>();
     gs.ecs.register::<Viewshed>();
 
     let map: Map = Map::test_map();
     let (player_x, player_y) = (35, 26);
 
+    // let mut rng = rltk::RandomNumberGenerator::new();
     // for room in map.rooms.iter().skip(1) {
     //     let (x, y) = room.center();
+
+    //     let glyph: rltk::FontCharType;
+    //     let roll = rng.roll_dice(1, 2);
+    //     match roll {
+    //         1 => glyph = rltk::to_cp437('g'),
+    //         _ => glyph = rltk::to_cp437('o'),
+    //     }
+
     //     gs.ecs
     //         .create_entity()
     //         .with(Position { x, y })
     //         .with(Renderable {
-    //             glyph: rltk::to_cp437('g'),
+    //             glyph: glyph,
     //             fg: RGB::named(rltk::RED),
     //             bg: RGB::named(rltk::BLACK),
     //         })
@@ -74,8 +84,10 @@ fn main() -> rltk::BError {
     //         })
     //         .build();
     // }
+
     gs.ecs.insert(map);
 
+    // Add player
     gs.ecs
         .create_entity()
         .with(Position {
@@ -92,6 +104,21 @@ fn main() -> rltk::BError {
             visible_tiles: Vec::new(),
             range: 8,
             dirty: true,
+        })
+        .build();
+
+    // Add moonshot
+    gs.ecs
+        .create_entity()
+        .with(Position {
+            x: player_x + 2,
+            y: player_y + 2,
+        })
+        .with(Moonshot {})
+        .with(Renderable {
+            glyph: rltk::to_cp437('m'),
+            fg: RGB::named(rltk::PURPLE),
+            bg: RGB::named(rltk::BLACK),
         })
         .build();
 
