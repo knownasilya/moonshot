@@ -3,6 +3,10 @@ use rltk::{Algorithm2D, BaseMap, Point, RandomNumberGenerator, Rltk, RGB};
 use specs::prelude::*;
 use std::cmp::{max, min};
 
+const MAPWIDTH: usize = 80;
+const MAPHEIGHT: usize = 50;
+const MAPCOUNT: usize = MAPHEIGHT * MAPWIDTH;
+
 #[derive(PartialEq, Copy, Clone)]
 pub enum TileType {
   Empty,
@@ -87,10 +91,10 @@ impl Map {
     let mut map = Map {
       tiles: vec![],
       rooms: Vec::new(),
-      width: 80,
-      height: 50,
-      revealed_tiles: vec![false; 80 * 50],
-      visible_tiles: vec![false; 80 * 50],
+      width: MAPWIDTH as i32,
+      height: MAPHEIGHT as i32,
+      revealed_tiles: vec![false; MAPCOUNT],
+      visible_tiles: vec![false; MAPCOUNT],
     };
 
     let tiles = vec![
@@ -161,12 +165,12 @@ impl Map {
   /// This gives a handful of random rooms and corridors joining them together.
   pub fn new_map_rooms_and_corridors() -> Map {
     let mut map = Map {
-      tiles: vec![TileType::Tree; 80 * 50],
+      tiles: vec![TileType::Tree; MAPCOUNT],
       rooms: Vec::new(),
-      width: 80,
-      height: 50,
-      revealed_tiles: vec![false; 80 * 50],
-      visible_tiles: vec![false; 80 * 50],
+      width: MAPWIDTH as i32,
+      height: MAPHEIGHT as i32,
+      revealed_tiles: vec![false; MAPCOUNT],
+      visible_tiles: vec![false; MAPCOUNT],
     };
 
     const MAX_ROOMS: i32 = 30;
@@ -271,7 +275,7 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
 
     // Move the coordinates
     x += 1;
-    if x > 79 {
+    if x > MAPWIDTH - 1 {
       x = 0;
       y += 1;
     }

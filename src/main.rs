@@ -1,14 +1,17 @@
 use rltk::{GameState, Rltk, RGB};
 use specs::prelude::*;
+
 mod components;
-pub use components::*;
+mod gui;
 mod map;
-pub use map::*;
 mod player;
-use player::*;
 mod rect;
-pub use rect::Rect;
 mod visibility_system;
+
+use components::*;
+use map::*;
+use player::*;
+use rect::Rect;
 use visibility_system::VisibilitySystem;
 
 pub struct State {
@@ -42,6 +45,8 @@ impl GameState for State {
                 ctx.set(pos.x, pos.y, render.fg, render.bg, render.glyph)
             }
         }
+
+        gui::draw_ui(&self.ecs, ctx);
     }
 }
 
