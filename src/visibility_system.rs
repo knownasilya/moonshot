@@ -1,4 +1,4 @@
-use super::{Map, Player, Position, Viewshed};
+use super::{BlocksVisibility, Map, Player, Position, Viewshed};
 use rltk::{field_of_view, Point};
 use specs::prelude::*;
 
@@ -11,10 +11,17 @@ impl<'a> System<'a> for VisibilitySystem {
     WriteStorage<'a, Viewshed>,
     WriteStorage<'a, Position>,
     ReadStorage<'a, Player>,
+    ReadStorage<'a, BlocksVisibility>,
   );
 
   fn run(&mut self, data: Self::SystemData) {
-    let (mut map, entities, mut viewshed, pos, player) = data;
+    let (mut map, entities, mut viewshed, pos, player, blocks_visibility) = data;
+
+    map.view_blocked.clear();
+    for (block_pos, _block) in (&pos, &blocks_visibility).join() {
+      let idx = map.xy_idx(block_pos.x, block_pos.y);
+      map.view_blocked.insert(idx);
+    }
 
     for (ent, viewshed, pos) in (&entities, &mut viewshed, &pos).join() {
       if viewshed.dirty {

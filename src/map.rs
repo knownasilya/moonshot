@@ -1,7 +1,8 @@
-use super::Rect;
+use super::{Door, Position, Rect, Renderable};
 use rltk::{Algorithm2D, BaseMap, Point, RandomNumberGenerator, Rltk, RGB};
 use specs::prelude::*;
 use std::cmp::{max, min};
+use std::collections::HashSet;
 
 const MAPWIDTH: usize = 80;
 const MAPHEIGHT: usize = 50;
@@ -13,6 +14,7 @@ pub enum TileType {
   WallV,
   WallH,
   Floor,
+  Door,
   Tree,
   TallGrass,
   Mountain,
@@ -26,6 +28,7 @@ impl TileType {
       '|' => TileType::WallV,
       '-' => TileType::WallH,
       '.' => TileType::Floor,
+      '+' => TileType::Door,
       '▲' => TileType::Mountain,
       ' ' => TileType::Empty,
       _ => TileType::Empty,
@@ -38,6 +41,7 @@ impl TileType {
       TileType::WallV => true,
       TileType::WallH => true,
       TileType::Mountain => true,
+      TileType::Door => false,
       TileType::TallGrass => false,
       TileType::Floor => false,
       TileType::Empty => false,
@@ -53,6 +57,7 @@ pub struct Map {
   pub height: i32,
   pub revealed_tiles: Vec<bool>,
   pub visible_tiles: Vec<bool>,
+  pub view_blocked: HashSet<usize>,
 }
 
 impl Map {
@@ -95,6 +100,7 @@ impl Map {
       height: MAPHEIGHT as i32,
       revealed_tiles: vec![false; MAPCOUNT],
       visible_tiles: vec![false; MAPCOUNT],
+      view_blocked: HashSet::new(),
     };
 
     let tiles = vec![
@@ -127,7 +133,7 @@ impl Map {
       "..................................|.......|.#..........''.......................",
       "......................#...........|.......|...........'.''......................",
       "..................................|.......|...#.........'.......................",
-      "..................................----.----.....................................",
+      "..................................---- ----.....................................",
       "................................................................................",
       "........................................................''......................",
       "..............................................#.................................",
@@ -171,6 +177,7 @@ impl Map {
       height: MAPHEIGHT as i32,
       revealed_tiles: vec![false; MAPCOUNT],
       visible_tiles: vec![false; MAPCOUNT],
+      view_blocked: HashSet::new(),
     };
 
     const MAX_ROOMS: i32 = 30;
@@ -216,7 +223,14 @@ impl Map {
 
 impl BaseMap for Map {
   fn is_opaque(&self, idx: usize) -> bool {
-    self.tiles[idx] == TileType::WallV || self.tiles[idx] == TileType::WallH
+    let is_match = match self.tiles[idx] {
+      TileType::WallV => true,
+      TileType::WallH => true,
+      TileType::Door => true,
+      _ => false,
+    };
+
+    is_match || self.view_blocked.contains(&idx)
   }
 }
 
@@ -233,7 +247,6 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
   let mut x = 0;
   for (idx, tile) in map.tiles.iter().enumerate() {
     // Render a tile depending upon the tile type
-
     if map.revealed_tiles[idx] {
       let glyph;
       let mut fg;
@@ -254,6 +267,10 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
           glyph = rltk::to_cp437('-');
           fg = RGB::from_f32(0., 1.0, 0.);
         }
+        TileType::Door => {
+          glyph = rltk::to_cp437('+');
+          fg = RGB::from_f32(0., 1.0, 0.);
+        }
         TileType::Tree => {
           glyph = rltk::to_cp437('#');
           fg = RGB::from_f32(0., 1.0, 0.);
@@ -272,6 +289,20 @@ pub fn draw_map(ecs: &World, ctx: &mut Rltk) {
       }
       ctx.set(x, y, fg, RGB::from_f32(0., 0., 0.), glyph);
     }
+
+    // let doors = ecs.write_storage::<Door>();
+    // let positions = ecs.write_storage::<Position>();
+    // let mut renderables = ecs.write_storage::<Renderable>();
+
+    // for (pos, _door, renderable) in (&positions, &doors, &mut renderables).join() {
+    //   if idx == map.xy_idx(pos.x, pos.y) {
+    //     if map.revealed_tiles[idx] {
+    //       renderable.fg = RGB::named(rltk::CHOCOLATE)
+    //     } else if map.visible_tiles[idx] {
+    //       renderable.fg = renderable.fg.to_greyscale()
+    //     }
+    //   }
+    // }
 
     // Move the coordinates
     x += 1;

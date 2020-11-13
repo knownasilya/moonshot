@@ -27,3 +27,16 @@ pub struct Viewshed {
   pub range: i32,
   pub dirty: bool,
 }
+
+#[derive(Component, Debug)]
+pub struct Name {
+  pub name: String,
+}
+
+#[derive(Component, Debug, Clone)]
+pub struct BlocksVisibility {}
+
+#[derive(Component, Debug, Clone)]
+pub struct Door {
+  pub open: bool,
+}
