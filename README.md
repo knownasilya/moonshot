@@ -8,6 +8,12 @@ Use the latest version (not nightly) to get `rltk` to compile.
 rustup update 1.47.0
 ```
 
+### Build wasm
+
+```sh
+wasm-bindgen target/wasm32-unknown-unknown/release/moonshot.wasm --out-dir wasm --no-modules --no-typescript
+```
+
 ## Resources
 
 - Map Editor https://notimetoplay.itch.io/ascii-mapper
