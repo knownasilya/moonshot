@@ -6,6 +6,7 @@ mod components;
 mod gamelog;
 mod gui;
 mod map;
+mod map_indexing_system;
 mod moonshot_ai;
 mod player;
 mod rect;
@@ -14,6 +15,7 @@ mod visibility_system;
 
 use components::*;
 use map::*;
+use map_indexing_system::MapIndexingSystem;
 use moonshot_ai::*;
 use player::*;
 use rect::Rect;
@@ -36,6 +38,8 @@ impl State {
         vis.run_now(&self.ecs);
         let mut moon = MoonshotAI {};
         moon.run_now(&self.ecs);
+        let mut mapindex = MapIndexingSystem {};
+        mapindex.run_now(&self.ecs);
         self.ecs.maintain();
     }
 }
@@ -87,6 +91,7 @@ fn main() -> rltk::BError {
     gs.ecs.register::<Name>();
     gs.ecs.register::<BlocksVisibility>();
     gs.ecs.register::<Door>();
+    gs.ecs.register::<BlocksTile>();
 
     let map: Map = Map::test_map();
     let (player_x, player_y) = (35, 26);
@@ -110,6 +115,9 @@ fn main() -> rltk::BError {
             render_order: 0,
         })
         .with(Player {})
+        .with(Name {
+            name: "Player".to_string(),
+        })
         .with(Viewshed {
             visible_tiles: Vec::new(),
             range: 8,
@@ -122,6 +130,10 @@ fn main() -> rltk::BError {
         .create_entity()
         .with(Position { x: 37, y: 30 })
         .with(Moonshot {})
+        .with(Name {
+            name: "Moonshot".to_string(),
+        })
+        .with(BlocksTile {})
         .with(Viewshed {
             visible_tiles: Vec::new(),
             range: 12,

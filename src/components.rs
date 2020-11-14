@@ -34,6 +34,9 @@ pub struct Name {
   pub name: String,
 }
 
+#[derive(Component, Debug)]
+pub struct BlocksTile {}
+
 #[derive(Component, Debug, Clone)]
 pub struct BlocksVisibility {}
 
