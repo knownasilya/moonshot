@@ -10,6 +10,7 @@ pub fn door(ecs: &mut World, x: i32, y: i32) {
       glyph: rltk::to_cp437('+'),
       fg: RGB::named(rltk::CHOCOLATE),
       bg: RGB::named(rltk::BLACK),
+      render_order: 2,
     })
     .with(Name {
       name: "Door".to_string(),
