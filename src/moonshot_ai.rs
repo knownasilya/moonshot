@@ -6,16 +6,19 @@ pub struct MoonshotAI {}
 
 impl<'a> System<'a> for MoonshotAI {
   type SystemData = (
+    ReadExpect<'a, Point>,
     ReadStorage<'a, Viewshed>,
     ReadStorage<'a, Position>,
     ReadStorage<'a, Moonshot>,
   );
 
   fn run(&mut self, data: Self::SystemData) {
-    let (viewshed, pos, moonshot) = data;
+    let (player_pos, viewshed, pos, moonshot) = data;
 
-    for (_viewshed, _pos, _moonshot) in (&viewshed, &pos, &moonshot).join() {
-      console::log("Moonshot sits lazily in the heat of the sun");
+    for (viewshed, _pos, _moonshot) in (&viewshed, &pos, &moonshot).join() {
+      if viewshed.visible_tiles.contains(&*player_pos) {
+        console::log("Moonshot sits lazily in the heat of the sun");
+      }
     }
   }
 }
