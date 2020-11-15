@@ -115,58 +115,15 @@ fn main() -> rltk::BError {
     let map: Map = Map::test_map();
     let (player_x, player_y) = (35, 26);
 
-    spawners::door(&mut gs.ecs, 38, 29);
-
     gs.ecs.insert(rltk::RandomNumberGenerator::new());
     gs.ecs.insert(RunState::PreRun);
     gs.ecs.insert(map);
     gs.ecs.insert(Point::new(player_x, player_y));
 
-    // Add player
-    gs.ecs
-        .create_entity()
-        .with(Position {
-            x: player_x,
-            y: player_y,
-        })
-        .with(Renderable {
-            glyph: rltk::to_cp437('@'),
-            fg: RGB::named(rltk::YELLOW),
-            bg: RGB::named(rltk::BLACK),
-            render_order: 0,
-        })
-        .with(Player {})
-        .with(Name {
-            name: "Player".to_string(),
-        })
-        .with(Viewshed {
-            visible_tiles: Vec::new(),
-            range: 8,
-            dirty: true,
-        })
-        .build();
-
-    // Add moonshot
-    gs.ecs
-        .create_entity()
-        .with(Position { x: 37, y: 30 })
-        .with(Moonshot {})
-        .with(Name {
-            name: "Moonshot".to_string(),
-        })
-        .with(BlocksTile {})
-        .with(Viewshed {
-            visible_tiles: Vec::new(),
-            range: 12,
-            dirty: true,
-        })
-        .with(Renderable {
-            glyph: rltk::to_cp437('m'),
-            fg: RGB::named(rltk::PURPLE),
-            bg: RGB::named(rltk::BLACK),
-            render_order: 0,
-        })
-        .build();
+    // Spawn entities
+    spawners::door(&mut gs.ecs, 38, 29);
+    spawners::player(&mut gs.ecs, player_x, player_y);
+    spawners::moonshot(&mut gs.ecs, 37, 30);
 
     // Add Gamelog
     gs.ecs.insert(gamelog::GameLog {
