@@ -30,7 +30,13 @@ pub fn moonshot(ecs: &mut World, x: i32, y: i32) {
   ecs
     .create_entity()
     .with(Position { x, y })
-    .with(Moonshot {})
+    .with(Moonshot {
+      actions: vec![
+        "follow_player".to_string(),
+        "wait".to_string(),
+        "explore_nearby".to_string(),
+      ],
+    })
     .with(Name {
       name: "Moonshot".to_string(),
     })

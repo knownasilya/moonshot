@@ -23,36 +23,52 @@ impl<'a> System<'a> for MoonshotAI {
       return;
     }
 
-    for (mut viewshed, mut pos, _moonshot, name) in
+    for (mut viewshed, mut pos, moonshot, name) in
       (&mut viewshed, &mut pos, &moonshot, &name).join()
     {
-      let distance =
-        rltk::DistanceAlg::Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
-      if distance < 2.0 {
-        console::log(format!("{} stops to rest", name.name.to_string()));
-      } else if viewshed.visible_tiles.contains(&*player_pos) {
-        console::log(format!("{} follows you", name.name.to_string()));
+      let action_roll = rng.roll_dice(1, moonshot.actions.len() as i32);
+      let action = &moonshot.actions[(action_roll - 1) as usize];
 
-        let mut x = player_pos.x;
-        let mut y = player_pos.y;
-        let move_roll = rng.roll_dice(1, 5);
-        match move_roll {
-          1 => x -= 2,
-          2 => x += 2,
-          3 => y -= 2,
-          4 => y += 2,
-          _ => {}
+      match action.as_str() {
+        "follow_player" => {
+          let distance =
+            rltk::DistanceAlg::Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
+
+          if distance < 2.0 {
+            console::log(format!("{} stops to rest", name.name.to_string()));
+          } else if viewshed.visible_tiles.contains(&*player_pos) {
+            console::log(format!("{} follows you", name.name.to_string()));
+            let mut x = player_pos.x;
+            let mut y = player_pos.y;
+            let move_roll = rng.roll_dice(1, 5);
+            match move_roll {
+              1 => x -= 2,
+              2 => x += 2,
+              3 => y -= 2,
+              4 => y += 2,
+              _ => {}
+            }
+            let path = rltk::a_star_search(
+              map.xy_idx(pos.x, pos.y) as i32,
+              map.xy_idx(x, y) as i32,
+              &mut *map,
+            );
+            if path.success && path.steps.len() > 1 {
+              pos.x = path.steps[1] as i32 % map.width;
+              pos.y = path.steps[1] as i32 / map.width;
+              viewshed.dirty = true;
+            }
+          }
+          break;
         }
-
-        let path = rltk::a_star_search(
-          map.xy_idx(pos.x, pos.y) as i32,
-          map.xy_idx(x, y) as i32,
-          &mut *map,
-        );
-        if path.success && path.steps.len() > 1 {
-          pos.x = path.steps[1] as i32 % map.width;
-          pos.y = path.steps[1] as i32 / map.width;
-          viewshed.dirty = true;
+        "wait" => {
+          break;
+        }
+        "explore_nearby" => {
+          break;
+        }
+        _ => {
+          break;
         }
       }
     }

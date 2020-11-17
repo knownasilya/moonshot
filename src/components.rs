@@ -20,7 +20,9 @@ pub struct Renderable {
 pub struct Player {}
 
 #[derive(Component, Debug)]
-pub struct Moonshot {}
+pub struct Moonshot {
+  pub actions: Vec<String>,
+}
 
 #[derive(Component)]
 pub struct Viewshed {
