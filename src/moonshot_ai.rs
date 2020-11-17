@@ -29,7 +29,7 @@ impl<'a> System<'a> for MoonshotAI {
       let action_roll = rng.roll_dice(1, moonshot.actions.len() as i32);
       let action = &moonshot.actions[(action_roll - 1) as usize];
 
-      match action.as_str() {
+      match action.as_ref() {
         "follow_player" => {
           let distance =
             rltk::DistanceAlg::Pythagoras.distance2d(Point::new(pos.x, pos.y), *player_pos);
