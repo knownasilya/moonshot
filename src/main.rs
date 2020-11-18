@@ -14,6 +14,7 @@ mod spawners;
 mod visibility_system;
 
 use components::*;
+use gamelog::*;
 use map::*;
 use map_indexing_system::MapIndexingSystem;
 use moonshot_ai::*;

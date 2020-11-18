@@ -1,5 +1,6 @@
 use super::{
-  BlocksTile, BlocksVisibility, Door, Map, Player, Position, Renderable, RunState, State, Viewshed,
+  BlocksTile, BlocksVisibility, Door, GameLog, Map, Moonshot, Name, Player, Position, RunState,
+  State, Viewshed,
 };
 use rltk::Point;
 use rltk::{Rltk, VirtualKeyCode};
@@ -14,7 +15,9 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
   let mut players = ecs.write_storage::<Player>();
   let mut viewsheds = ecs.write_storage::<Viewshed>();
   let mut ppos = ecs.write_resource::<Point>();
-  let mut renderables = ecs.write_storage::<Renderable>();
+  let mut gamelog = ecs.write_resource::<GameLog>();
+  let moonshots = ecs.read_storage::<Moonshot>();
+  let names = ecs.read_storage::<Name>();
   let map = ecs.fetch::<Map>();
 
   for (_player, pos, viewshed) in (&mut players, &mut positions, &mut viewsheds).join() {
@@ -34,6 +37,9 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
 
     for potential_target in map.tile_content[destination_idx].iter() {
       let door = doors.get_mut(*potential_target);
+      let _moonshot = moonshots.get(*potential_target);
+      let name = names.get(*potential_target);
+
       if let Some(door) = door {
         door.open = true;
         blocks_visibility.remove(*potential_target);
@@ -41,6 +47,13 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
         // let glyph = renderables.get_mut(*potential_target).unwrap();
         // glyph.glyph = rltk::to_cp437('/');
         viewshed.dirty = true;
+      } else if let Some(_moonshot) = _moonshot {
+        match name {
+          Some(name) => gamelog
+            .entries
+            .push(format!("You bump into {:?}", name.name)),
+          None => gamelog.entries.push(format!("You bump into something")),
+        }
       }
     }
   }
