@@ -30,11 +30,13 @@ pub fn try_move_player(delta_x: i32, delta_y: i32, ecs: &mut World) {
       ppos.x = pos.x;
       ppos.y = pos.y;
 
+      // Mark viewshed for recalc
       viewshed.dirty = true;
     }
 
     let destination_idx = map.xy_idx(pos.x + delta_x, pos.y + delta_y);
 
+    // Handle colliding into specific objects
     for potential_target in map.tile_content[destination_idx].iter() {
       let door = doors.get_mut(*potential_target);
       let _moonshot = moonshots.get(*potential_target);

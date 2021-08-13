@@ -1,13 +1,11 @@
 {
   "folders": [
-	{
-		"name": "moonshot",
-		"path": "."
-	}
-],
+    {
+      "name": "moonshot",
+      "path": "."
+    }
+  ],
   "settings": {
-    "cSpell.words": [
-      "renderable"
-    ]
+    "cSpell.words": ["renderable", "viewshed", "viewsheds"]
   }
 }
